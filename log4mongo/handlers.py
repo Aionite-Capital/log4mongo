@@ -258,7 +258,8 @@ class BufferedMongoHandler(MongoHandler):
                         try:
                             self.collection.insert_one(msg)
                         except Exception as _:
-                            print(f'flush_to_mongo failed with\n{msg}')
+                            if msg['levelname'] != 'DEBUG':
+                                print(f'flush_to_mongo failed with\n{msg}')
                     # clear buffer now
                     self.empty_buffer()
 
