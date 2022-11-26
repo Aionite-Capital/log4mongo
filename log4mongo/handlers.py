@@ -252,8 +252,15 @@ class BufferedMongoHandler(MongoHandler):
                 try:
                     self.collection.insert_many(self.buffer)
                     self.empty_buffer()
-                except Exception as e:
-                    print(f'flush_to_mongo failed with: {e}')
+                except Exception as _:
+                    # try to insert one-by-one and catch exception. this is from MH
+                    for msg in self.buffer:
+                        try:
+                            self.collection.insert_one(msg)
+                        except Exception as _:
+                            print(f'flush_to_mongo failed with\n{msg}')
+                    # clear buffer now
+                    self.empty_buffer()
 
     def empty_buffer(self):
         """Empty the buffer list."""
