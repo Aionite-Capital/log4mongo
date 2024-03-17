@@ -251,7 +251,6 @@ class BufferedMongoHandler(MongoHandler):
             if self.collection is not None and len(self.buffer) > 0:
                 try:
                     self.collection.insert_many(self.buffer)
-                    self.empty_buffer()
                 except Exception as _:
                     # try to insert one-by-one and catch exception. this is from MH
                     for msg in self.buffer:
@@ -260,8 +259,9 @@ class BufferedMongoHandler(MongoHandler):
                         except Exception as _:
                             if msg['levelname'] != 'DEBUG':
                                 print(f'flush_to_mongo failed with\n{msg}')
-                    # clear buffer now
-                    self.empty_buffer()
+
+                # clear buffer now
+                self.empty_buffer()
 
     def empty_buffer(self):
         """Empty the buffer list."""
